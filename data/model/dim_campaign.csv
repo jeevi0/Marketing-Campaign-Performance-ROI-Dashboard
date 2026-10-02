@@ -1,0 +1,40 @@
+CampaignKey,CampaignCode,Campaign,ClientKey,Objective,Theme,StartDate,EndDate,Budget,Status
+1,CMP-01001,NovaTech | Always-On | Lead Generation,1,Lead Generation,Always-On,2025-01-01,2026-06-30,550600.0,Active
+2,CMP-01002,NovaTech | Webinar Series | Retargeting,1,Retargeting,Webinar Series,2025-08-15,2025-12-24,466800.0,Completed
+3,CMP-01003,NovaTech | Lead Sprint | Lead Generation,1,Lead Generation,Lead Sprint,2025-07-21,2025-11-12,257600.0,Completed
+4,CMP-01004,NovaTech | New Launch | Lead Generation,1,Lead Generation,New Launch,2025-10-29,2026-02-13,245900.0,Completed
+5,CMP-02005,UrbanThreads | Always-On | Lead Generation,2,Lead Generation,Always-On,2025-01-01,2026-06-30,411600.0,Active
+6,CMP-02006,UrbanThreads | Retargeting Boost | Sales,2,Sales / Conversions,Retargeting Boost,2025-11-08,2026-04-11,171900.0,Completed
+7,CMP-02007,UrbanThreads | Webinar Series | Sales,2,Sales / Conversions,Webinar Series,2025-11-13,2026-04-04,137000.0,Completed
+8,CMP-02008,UrbanThreads | Summer Sale | Sales,2,Sales / Conversions,Summer Sale,2025-04-07,2025-08-26,227000.0,Completed
+9,CMP-02009,UrbanThreads | Q1 Kickoff | Retargeting,2,Retargeting,Q1 Kickoff,2025-11-21,2026-02-23,169300.0,Completed
+10,CMP-03010,GreenLeaf | Always-On | Lead Generation,3,Lead Generation,Always-On,2025-01-01,2026-06-30,360600.0,Active
+11,CMP-03011,GreenLeaf | Spring Promo | Brand Awareness,3,Brand Awareness,Spring Promo,2025-08-04,2025-10-07,87700.0,Completed
+12,CMP-03012,GreenLeaf | New Launch | Brand Awareness,3,Brand Awareness,New Launch,2025-07-07,2025-12-03,166400.0,Completed
+13,CMP-03013,GreenLeaf | Year-End Push | Retargeting,3,Retargeting,Year-End Push,2025-04-29,2025-10-21,213700.0,Completed
+14,CMP-04014,Apex | Always-On | Lead Generation,4,Lead Generation,Always-On,2025-01-01,2026-06-30,629200.0,Active
+15,CMP-04015,Apex | Webinar Series | Brand Awareness,4,Brand Awareness,Webinar Series,2025-06-08,2025-10-09,226600.0,Completed
+16,CMP-04016,Apex | Summer Sale | Lead Generation,4,Lead Generation,Summer Sale,2026-04-18,2026-06-30,187500.0,Active
+17,CMP-04017,Apex | Festive Season | Lead Generation,4,Lead Generation,Festive Season,2025-09-26,2026-04-26,445200.0,Completed
+18,CMP-04018,Apex | Brand Lift | Product Launch,4,Product Launch,Brand Lift,2025-04-25,2025-09-17,357600.0,Completed
+19,CMP-04019,Apex | New Launch | Lead Generation,4,Lead Generation,New Launch,2026-01-05,2026-04-15,235400.0,Completed
+20,CMP-05020,BrightPath | Always-On | Lead Generation,5,Lead Generation,Always-On,2025-01-01,2026-06-30,181300.0,Active
+21,CMP-05021,BrightPath | Retargeting Boost | Lead Generation,5,Lead Generation,Retargeting Boost,2026-03-29,2026-05-24,26100.0,Completed
+22,CMP-05022,BrightPath | Spring Promo | Lead Generation,5,Lead Generation,Spring Promo,2025-01-19,2025-08-13,109400.0,Completed
+23,CMP-05023,BrightPath | New Launch | Sales,5,Sales / Conversions,New Launch,2025-05-12,2025-07-30,74500.0,Completed
+24,CMP-06024,MediCare | Always-On | Lead Generation,6,Lead Generation,Always-On,2025-01-01,2026-06-30,268200.0,Active
+25,CMP-06025,MediCare | New Launch | Sales,6,Sales / Conversions,New Launch,2025-03-31,2025-09-08,188600.0,Completed
+26,CMP-06026,MediCare | Retargeting Boost | Brand Awareness,6,Brand Awareness,Retargeting Boost,2025-03-24,2025-08-08,224800.0,Completed
+27,CMP-06027,MediCare | Summer Sale | Lead Generation,6,Lead Generation,Summer Sale,2026-04-10,2026-06-11,90800.0,Completed
+28,CMP-06028,MediCare | Festive Season | Sales,6,Sales / Conversions,Festive Season,2025-12-08,2026-02-23,99000.0,Completed
+29,CMP-06029,MediCare | Brand Lift | Sales,6,Sales / Conversions,Brand Lift,2025-10-04,2026-03-25,324400.0,Completed
+30,CMP-07030,SwiftMove | Always-On | Lead Generation,7,Lead Generation,Always-On,2025-01-01,2026-06-30,594900.0,Active
+31,CMP-07031,SwiftMove | Spring Promo | Sales,7,Sales / Conversions,Spring Promo,2025-07-15,2025-10-28,217600.0,Completed
+32,CMP-07032,SwiftMove | Year-End Push | Product Launch,7,Product Launch,Year-End Push,2025-01-08,2025-08-11,735900.0,Completed
+33,CMP-07033,SwiftMove | New Launch | Lead Generation,7,Lead Generation,New Launch,2025-01-25,2025-04-09,140700.0,Completed
+34,CMP-07034,SwiftMove | Q1 Kickoff | Retargeting,7,Retargeting,Q1 Kickoff,2025-09-29,2025-11-19,154600.0,Completed
+35,CMP-08035,FinEdge | Always-On | Lead Generation,8,Lead Generation,Always-On,2025-01-01,2026-06-30,855900.0,Active
+36,CMP-08036,FinEdge | New Launch | Brand Awareness,8,Brand Awareness,New Launch,2025-05-03,2025-07-14,149000.0,Completed
+37,CMP-08037,FinEdge | Brand Lift | Brand Awareness,8,Brand Awareness,Brand Lift,2025-09-27,2026-01-27,329200.0,Completed
+38,CMP-08038,FinEdge | Spring Promo | Brand Awareness,8,Brand Awareness,Spring Promo,2025-09-27,2025-12-23,195300.0,Completed
+39,CMP-08039,FinEdge | Q1 Kickoff | Product Launch,8,Product Launch,Q1 Kickoff,2026-03-16,2026-05-24,143200.0,Completed
