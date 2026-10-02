@@ -181,6 +181,6 @@ Marketing-Campaign-Performance-ROI-Dashboard/
 
 ---
 
-**Author:** Jeevi · [GitHub](https://github.com/<your-username>) · [LinkedIn](https://linkedin.com/in/<your-profile>)
+**Author:** Jeevi · [GitHub](https://github.com/<jeevi0>) · [LinkedIn](https://www.linkedin.com/in/jeevi0410/>)
 
 ⭐ If you found this useful, consider giving the repo a star!
