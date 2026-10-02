@@ -153,7 +153,7 @@ Marketing-Campaign-Performance-ROI-Dashboard/
 
 1. **Clone** the repo
    ```bash
-   git clone https://github.com/<your-username>/Marketing-Campaign-Performance-ROI-Dashboard.git
+   git clone https://github.com/jeevi0/Marketing-Campaign-Performance-ROI-Dashboard.git
    ```
 2. **Open the report** — double-click `powerbi/Marketing_Campaign_ROI_Dashboard.pbix` in Power BI Desktop, then *Transform data → Edit parameters* and point `DataFolderPath` at your local `data/model/` folder → **Refresh**.
 3. **Or build it yourself** — follow [`docs/report_build_guide.md`](docs/report_build_guide.md) (≈ 2–3 hours).
