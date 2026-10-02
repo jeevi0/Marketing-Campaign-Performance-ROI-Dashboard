@@ -1,0 +1,205 @@
+// =============================================================================
+//  Marketing Campaign Performance & ROI Dashboard - DAX library
+//  Create an empty table "_Measures" (Enter Data, one dummy column, then hide it)
+//  and add each measure below to it. Display folders are noted in [brackets].
+// =============================================================================
+
+
+// -----------------------------------------------------------------------------
+//  1. DATE TABLE  (Modeling > New table)  -> then "Mark as date table" on [Date]
+// -----------------------------------------------------------------------------
+DimDate =
+VAR _Start = DATE ( YEAR ( MIN ( FactPerformance[Date] ) ), 1, 1 )
+VAR _End   = DATE ( YEAR ( MAX ( FactPerformance[Date] ) ), 12, 31 )
+RETURN
+ADDCOLUMNS (
+    CALENDAR ( _Start, _End ),
+    "Year",          YEAR ( [Date] ),
+    "Quarter",       "Q" & QUARTER ( [Date] ),
+    "Year Quarter",  YEAR ( [Date] ) & " Q" & QUARTER ( [Date] ),
+    "Month No",      MONTH ( [Date] ),
+    "Month",         FORMAT ( [Date], "MMM" ),
+    "Year Month",    FORMAT ( [Date], "MMM yyyy" ),
+    "YearMonthKey",  YEAR ( [Date] ) * 100 + MONTH ( [Date] ),
+    "Week Start",    [Date] - WEEKDAY ( [Date], 2 ) + 1,
+    "Weekday",       FORMAT ( [Date], "ddd" ),
+    "Weekday No",    WEEKDAY ( [Date], 2 ),
+    "Is Weekend",    IF ( WEEKDAY ( [Date], 2 ) >= 6, "Weekend", "Weekday" )
+)
+// Sort by column:  Month -> Month No,  Year Month -> YearMonthKey,  Weekday -> Weekday No
+
+
+// -----------------------------------------------------------------------------
+//  2. BASE MEASURES  [01 Base]
+// -----------------------------------------------------------------------------
+Total Spend        = SUM ( FactPerformance[Spend] )                 // $#,0
+Total Impressions  = SUM ( FactPerformance[Impressions] )           // #,0
+Total Clicks       = SUM ( FactPerformance[Clicks] )                // #,0
+Total Leads        = SUM ( FactPerformance[Leads] )                 // #,0
+Total Conversions  = SUM ( FactPerformance[Conversions] )           // #,0
+Total Revenue      = SUM ( FactPerformance[Revenue] )               // $#,0
+Active Campaigns   = DISTINCTCOUNT ( FactPerformance[CampaignKey] ) // #,0
+Active Days        = DISTINCTCOUNT ( FactPerformance[Date] )
+
+
+// -----------------------------------------------------------------------------
+//  3. EFFICIENCY KPIs  [02 KPIs]
+// -----------------------------------------------------------------------------
+CTR                = DIVIDE ( [Total Clicks], [Total Impressions] )             // 0.00%
+CPC                = DIVIDE ( [Total Spend], [Total Clicks] )                   // $#,0.00
+CPM                = DIVIDE ( [Total Spend], [Total Impressions] ) * 1000       // $#,0.00
+CPL                = DIVIDE ( [Total Spend], [Total Leads] )                    // $#,0.00
+CPA                = DIVIDE ( [Total Spend], [Total Conversions] )              // $#,0.00
+Conversion Rate    = DIVIDE ( [Total Conversions], [Total Clicks] )             // 0.00%
+Lead to Conversion = DIVIDE ( [Total Conversions], [Total Leads] )              // 0.0%
+Net Profit         = [Total Revenue] - [Total Spend]                            // $#,0
+ROI                = DIVIDE ( [Total Revenue] - [Total Spend], [Total Spend] )  // 0.0%
+ROAS               = DIVIDE ( [Total Revenue], [Total Spend] )                  // 0.00"x"
+Revenue per Conversion = DIVIDE ( [Total Revenue], [Total Conversions] )        // $#,0.00
+
+
+// -----------------------------------------------------------------------------
+//  4. BUDGET  [03 Budget]
+//  Budget lives on DimCampaign (one row per campaign). Date filters do not reach
+//  DimCampaign, so the budget is pro-rated to the days of the flight that fall
+//  inside the selected period - this keeps Budget vs Spend honest on any slicer.
+// -----------------------------------------------------------------------------
+Total Budget (Full Flight) =
+SUMX (
+    CALCULATETABLE ( VALUES ( DimCampaign[CampaignKey] ), FactPerformance ),
+    CALCULATE ( MAX ( DimCampaign[Budget] ) )
+)
+
+Budget (Pro-rated) =
+VAR _PeriodStart = MIN ( DimDate[Date] )
+VAR _PeriodEnd   = MAX ( DimDate[Date] )
+RETURN
+SUMX (
+    CALCULATETABLE ( VALUES ( DimCampaign[CampaignKey] ), FactPerformance ),
+    VAR _Start   = CALCULATE ( MAX ( DimCampaign[StartDate] ) )
+    VAR _End     = CALCULATE ( MAX ( DimCampaign[EndDate] ) )
+    VAR _Budget  = CALCULATE ( MAX ( DimCampaign[Budget] ) )
+    VAR _Flight  = INT ( _End - _Start ) + 1
+    VAR _Overlap = MAX ( 0, INT ( MIN ( _End, _PeriodEnd ) - MAX ( _Start, _PeriodStart ) ) + 1 )
+    RETURN DIVIDE ( _Budget, _Flight ) * _Overlap
+)
+
+Budget Variance    = [Total Spend] - [Budget (Pro-rated)]          // +$#,0;-$#,0
+Budget Utilization = DIVIDE ( [Total Spend], [Budget (Pro-rated)] ) // 0.0%
+
+Budget Status =
+VAR _u = [Budget Utilization]
+RETURN
+SWITCH (
+    TRUE (),
+    ISBLANK ( _u ), BLANK (),
+    _u > 1.05, "Over budget",
+    _u < 0.90, "Under-paced",
+    "On track"
+)
+
+
+// -----------------------------------------------------------------------------
+//  5. SHARE / CONTRIBUTION  [04 Share]
+//  ALLSELECTED keeps slicer filters but removes the row's own filter.
+// -----------------------------------------------------------------------------
+Spend Share % =
+DIVIDE ( [Total Spend], CALCULATE ( [Total Spend], ALLSELECTED ( FactPerformance ) ) )
+
+Conversion Contribution % =
+DIVIDE ( [Total Conversions], CALCULATE ( [Total Conversions], ALLSELECTED ( FactPerformance ) ) )
+
+Revenue Share % =
+DIVIDE ( [Total Revenue], CALCULATE ( [Total Revenue], ALLSELECTED ( FactPerformance ) ) )
+
+// Avg CPA across everything currently selected - reference line for CPA comparison
+CPA Benchmark =
+CALCULATE ( [CPA], ALLSELECTED ( FactPerformance ) )
+
+CPA vs Benchmark % = DIVIDE ( [CPA] - [CPA Benchmark], [CPA Benchmark] )   // +0.0%;-0.0%
+
+
+// -----------------------------------------------------------------------------
+//  6. TIME INTELLIGENCE  [05 Time]   (requires DimDate marked as date table)
+// -----------------------------------------------------------------------------
+Spend PM       = CALCULATE ( [Total Spend],       DATEADD ( DimDate[Date], -1, MONTH ) )
+Conversions PM = CALCULATE ( [Total Conversions], DATEADD ( DimDate[Date], -1, MONTH ) )
+Spend MoM %    = DIVIDE ( [Total Spend] - [Spend PM], [Spend PM] )
+
+Spend PY       = CALCULATE ( [Total Spend],       SAMEPERIODLASTYEAR ( DimDate[Date] ) )
+Revenue PY     = CALCULATE ( [Total Revenue],     SAMEPERIODLASTYEAR ( DimDate[Date] ) )
+Conversions PY = CALCULATE ( [Total Conversions], SAMEPERIODLASTYEAR ( DimDate[Date] ) )
+ROI PY         = DIVIDE ( [Revenue PY] - [Spend PY], [Spend PY] )
+
+Spend YoY %       = DIVIDE ( [Total Spend] - [Spend PY], [Spend PY] )
+Revenue YoY %     = DIVIDE ( [Total Revenue] - [Revenue PY], [Revenue PY] )
+Conversions YoY % = DIVIDE ( [Total Conversions] - [Conversions PY], [Conversions PY] )
+ROI YoY pts       = [ROI] - [ROI PY]                                 // change in percentage points
+
+Spend YTD   = TOTALYTD ( [Total Spend],   DimDate[Date] )
+Revenue YTD = TOTALYTD ( [Total Revenue], DimDate[Date] )
+
+// 7-day rolling CPA for a smoother trend line
+CPA 7D Rolling =
+CALCULATE (
+    [CPA],
+    DATESINPERIOD ( DimDate[Date], MAX ( DimDate[Date] ), -7, DAY )
+)
+
+
+// -----------------------------------------------------------------------------
+//  7. RANKING  [06 Rank]
+// -----------------------------------------------------------------------------
+Campaign ROI Rank =
+IF (
+    HASONEVALUE ( DimCampaign[Campaign] ),
+    RANKX ( ALLSELECTED ( DimCampaign[Campaign] ), [ROI], , DESC, DENSE )
+)
+
+Client Revenue Rank =
+IF (
+    HASONEVALUE ( DimClient[Client] ),
+    RANKX ( ALLSELECTED ( DimClient[Client] ), [Total Revenue], , DESC, DENSE )
+)
+
+Top Channel by ROI =
+VAR _t = TOPN ( 1, VALUES ( DimChannel[ChannelGroup] ), [ROI], DESC )
+RETURN CONCATENATEX ( _t, DimChannel[ChannelGroup], ", " )
+
+Top Client by Revenue =
+VAR _t = TOPN ( 1, VALUES ( DimClient[Client] ), [Total Revenue], DESC )
+RETURN CONCATENATEX ( _t, DimClient[Client], ", " )
+
+
+// -----------------------------------------------------------------------------
+//  8. CONDITIONAL FORMATTING & LABELS  [07 Format]
+//  Use with Format > Conditional formatting > Field value.
+// -----------------------------------------------------------------------------
+ROI Color =
+SWITCH (
+    TRUE (),
+    ISBLANK ( [ROI] ), BLANK (),
+    [ROI] < 0,  "#C0392B",     // loss
+    [ROI] < 1,  "#C98500",     // below 2x ROAS
+    "#1B7F4C"                  // healthy
+)
+
+CPA Color =
+IF ( [CPA] > [CPA Benchmark], "#C0392B", "#1B7F4C" )
+
+Budget Status Color =
+SWITCH ( [Budget Status], "Over budget", "#C0392B", "Under-paced", "#C98500", "On track", "#1B7F4C" )
+
+// Dynamic subtitle for every page header
+Selected Period Label =
+"Period: " & FORMAT ( MIN ( DimDate[Date] ), "dd MMM yyyy" ) & "  -  "
+    & FORMAT ( MAX ( DimDate[Date] ), "dd MMM yyyy" )
+
+ROI Label =
+FORMAT ( [ROI], "0.0%" ) & "  |  ROAS " & FORMAT ( [ROAS], "0.00" ) & "x"
+
+// Text for the KPI card footers, e.g. "▲ 12.4% vs PY"
+Spend YoY Label =
+VAR _v = [Spend YoY %]
+RETURN IF ( ISBLANK ( _v ), "No prior-year data",
+           IF ( _v >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( _v ), "0.0%" ) & " vs PY" )
